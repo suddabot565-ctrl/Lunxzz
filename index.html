@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUEEN ASHI MD MINI BOT</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+    color:#00aaff;
+}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    background:#000;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    width:330px;
+    padding:25px;
+    background:rgba(0,0,0,.85);
+    border-radius:15px;
+    text-align:center;
+    border:2px solid #00aaff;
+    box-shadow:0 0 20px #00aaff;
+}
+
+.rgb-text{
+    font-size:22px;
+    font-weight:bold;
+    text-shadow:0 0 10px #00aaff;
+}
+
+h6{
+    margin-top:8px;
+}
+
+.input-container{
+    display:flex;
+    margin-top:15px;
+}
+
+.input-container input{
+    width:70%;
+    height:45px;
+    border:1px solid #00aaff;
+    background:#000;
+    outline:none;
+    border-radius:10px 0 0 10px;
+    padding-left:10px;
+    font-size:16px;
+}
+
+.input-container button{
+    width:30%;
+    height:45px;
+    border:1px solid #00aaff;
+    border-left:none;
+    border-radius:0 10px 10px 0;
+    background:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.input-container button:hover{
+    background:#001a33;
+}
+
+#pair{
+    margin-top:15px;
+}
+
+#copy{
+    padding:12px;
+    border:1px solid #00aaff;
+    border-radius:10px;
+    box-shadow:0 0 10px #00aaff;
+}
+
+.music-btn{
+    position:fixed;
+    right:15px;
+    bottom:25px;
+    padding:12px 18px;
+    border-radius:30px;
+    background:#000;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 0 15px #00aaff;
+    border:1px solid #00aaff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="box">
+
+<i class="fas fa-user-astronaut" style="font-size:24px;"></i>
+
+<div class="rgb-text">
+QUEEN ASHI MD MINI BOT
+</div>
+
+<h6>CREATED BY DEV XANZ</h6>
+
+<h6>
+<i class="fas fa-bullhorn"></i>
+Enter your number with country code
+</h6>
+
+<div class="input-container">
+
+<input
+type="tel"
+id="number"
+placeholder="9476xxxxxxx"
+autocomplete="off">
+
+<button id="submit">
+<i class="fas fa-paper-plane"></i>
+</button>
+
+</div>
+
+<main id="pair"></main>
+
+</div>
+</div>
+
+<audio id="bgMusic" loop>
+<source src="https://files.catbox.moe/e1umjr.mpeg"
+type="audio/mpeg">
+</audio>
+
+<div class="music-btn" id="musicBtn" onclick="toggleMusic()">
+<i class="fas fa-play"></i> Play
+</div>
+
+<script>
+
+const numberInput = document.getElementById("number");
+const submit = document.getElementById("submit");
+const pair = document.getElementById("pair");
+
+const music = document.getElementById("bgMusic");
+const musicBtn = document.getElementById("musicBtn");
+
+function toggleMusic(){
+
+    if(music.paused){
+
+        music.play();
+
+        musicBtn.innerHTML =
+        '<i class="fas fa-pause"></i> Pause';
+
+    }else{
+
+        music.pause();
+
+        musicBtn.innerHTML =
+        '<i class="fas fa-play"></i> Play';
+    }
+}
+
+function generateDemoCode(){
+
+    const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    let code = "";
+
+    for(let i = 0; i < 8; i++){
+
+        code += chars.charAt(
+            Math.floor(Math.random() * chars.length)
+        );
+    }
+
+    return code.slice(0,4) + "-" + code.slice(4);
+}
+
+async function copyCode(){
+
+    const code =
+    document.getElementById("copy").dataset.code;
+
+    try{
+
+        await navigator.clipboard.writeText(code);
+
+        document.getElementById("copy").innerHTML =
+        '<i class="fas fa-check"></i> COPIED';
+
+    }catch(error){
+
+        alert("Copy failed");
+    }
+}
+
+submit.addEventListener("click", function(){
+
+    const number =
+    numberInput.value.replace(/[^0-9]/g,"");
+
+    if(!number){
+
+        pair.innerHTML =
+        '<span style="color:red;">' +
+        '<i class="fas fa-exclamation-circle"></i> ' +
+        'Enter your WhatsApp number</span>';
+
+        return;
+    }
+
+    if(number.length < 11){
+
+        pair.innerHTML =
+        '<span style="color:red;">' +
+        '<i class="fas fa-times-circle"></i> ' +
+        'Invalid Number</span>';
+
+        return;
+    }
+
+    pair.innerHTML =
+    '<span>' +
+    '<i class="fas fa-spinner fa-spin"></i> ' +
+    'Generating code...</span>';
+
+    setTimeout(function(){
+
+        const code = generateDemoCode();
+
+        pair.innerHTML = `
+        <div
+            id="copy"
+            data-code="${code}"
+            onclick="copyCode()"
+            style="font-weight:bold;cursor:pointer;"
+        >
+            <i class="fas fa-key"></i>
+            CODE:
+            <span>${code}</span>
+        </div>
+        `;
+
+    },1000);
+
+});
+
+numberInput.addEventListener("keypress",function(e){
+
+    if(e.key === "Enter"){
+        submit.click();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
